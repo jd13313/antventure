@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 class AntRed extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
         super(scene, x, y);
@@ -55,28 +57,28 @@ class AntRed extends Phaser.GameObjects.Container {
         head.anims.create({
             key: 'antRedHeadBite',
             frames: head.anims.generateFrameNumbers('antRedHead', { start: 0, end: 1 }),
-            framerate: 2,
-            repeat: 7
+            frameRate: 10,
+            repeat: 4
         });
 
         abdomen.anims.create({
             key: 'antRedButtWiggle',
             frames: abdomen.anims.generateFrameNumbers('antRedAbdomen', { start: 0, end: 1 }),
-            framerate: 2,
+            frameRate: 5,
             repeat: 1
         });
 
         legsL.anims.create({
             key: 'antRedLegsLeftWalk',
             frames: legsL.anims.generateFrameNumbers('antRedLegs', { start: 0, end: 2 }),
-            framerat: 2,
+            frameRate: 5,
             repeat: 1
         });
 
         legsR.anims.create({
             key: 'antRedLegsRightWalk',
             frames: legsR.anims.generateFrameNumbers('antRedLegs', { start: 0, end: 2 }),
-            framerat: 2,
+            frameRate: 5,
             repeat: 1
         });
 
@@ -127,31 +129,58 @@ class AntRed extends Phaser.GameObjects.Container {
             case 'down':
             case 'left':
             case 'right':
-                this.playAnimation(this.ANT_BODY_PARTS.ABDOMEN, 'antRedButtWiggle');
-                this.playAnimation(this.ANT_BODY_PARTS.LEGS_R, 'antRedLegsRightWalk');
-                this.playAnimation(this.ANT_BODY_PARTS.LEGS_L, 'antRedLegsLeftWalk');
-            
-                switch(direction) {
-                    case 'up':
-                        this.y -= distance;
-                        this.rotation = 0;
-                        break;
-                    case 'down':
-                        this.y += distance;
-                        this.rotation = Math.PI;
-                        break;
-                    case 'left':
-                        this.x -= distance;
-                        this.rotation = -Math.PI / 2;
-                        break;
-                    case 'right':
-                        this.x += distance;
-                        this.rotation = Math.PI / 2;
-                        break;
-                }
+                this.handleWalking(direction, distance);
+                break;
             default:
+                this.stopWalking();
                 break;
         }
+    }
+
+    /**
+     * Handles the walking animation and movement of the ant.
+     * @param {string} direction 
+     * @param {number} distance 
+     */
+    
+    handleWalking(direction, distance) {
+        this.playAnimation(this.ANT_BODY_PARTS.ABDOMEN, 'antRedButtWiggle');
+        this.playAnimation(this.ANT_BODY_PARTS.LEGS_R, 'antRedLegsRightWalk');
+        this.playAnimation(this.ANT_BODY_PARTS.LEGS_L, 'antRedLegsLeftWalk');
+    
+        switch(direction) {
+            case 'up':
+                this.y -= distance;
+                this.rotation = 0;
+                break;
+            case 'down':
+                this.y += distance;
+                this.rotation = Math.PI;
+                break;
+            case 'left':
+                this.x -= distance;
+                this.rotation = -Math.PI / 2;
+                break;
+            case 'right':
+                this.x += distance;
+                this.rotation = Math.PI / 2;
+                break;
+        }
+    }
+
+    /**
+     * Stops the walk animations and returns the moving parts to their resting frame.
+     */
+    stopWalking() {
+        [
+            this.ANT_BODY_PARTS.ABDOMEN,
+            this.ANT_BODY_PARTS.LEGS_R,
+            this.ANT_BODY_PARTS.LEGS_L
+        ].forEach(index => {
+            const sprite = this.getAt(index);
+            sprite.anims.stop();
+            sprite.setFrame(0);
+        });
     }
 }
 

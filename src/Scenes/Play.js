@@ -39,9 +39,20 @@ class Play extends Phaser.Scene {
 
     update() {
         this.handlePlayerMovement();
-        
-        const gameStatsElement = document.getElementById('game-stats');
         const antStats = this.ant.getData('stats');
+        
+        if (antStats.health <= 0) {
+            // Handle ant death here, e.g., restart the scene or show game over
+            this.scene.restart();
+            return;
+        }
+        
+        this.ant.setData('stats', {
+            ...antStats,
+            health: antStats.health - .05
+        })
+        const gameStatsElement = document.getElementById('game-stats');
+        
         gameStatsElement.innerHTML = `
             <li>Health: ${antStats.health}</li>
             <li>Intelligence: ${antStats.intelligence}</li>
@@ -145,7 +156,7 @@ class Play extends Phaser.Scene {
             return;
         }
 
-        let direction = Object.entries(this.cursors).find(([keyName, keyData]) => {
+        let direction = Object.entries(this.cursors).find(([, keyData]) => {
             return keyData.isDown;
         });
 

@@ -2,10 +2,11 @@
     {
         "spriteName": "foodStrawberry",
         "foodValue": 5,
-        "effects": ["speedBoost"]
+        "effects": ["speed"]
     },
     {
         "spriteName": "foodMeat",
-        "foodValue": 15
+        "foodValue": 5,
+        "effects": ["health"]
     }
 ]
